@@ -512,8 +512,10 @@ def main():
     # 5. Generar recomendaciones
     df_recommendations = generate_ticker_recommendations(df_volatility, df_performance)
     
-    # 6. Guardar resultados
-    output_path = Path(__file__).parent / "ticker_parameters_recommendations.csv"
+    # 6. Guardar resultados CSV en data/analysis/
+    data_dir = Path(__file__).parent.parent.parent / "data" / "analysis"
+    data_dir.mkdir(parents=True, exist_ok=True)
+    output_path = data_dir / "ticker_parameters_recommendations.csv"
     df_recommendations.to_csv(output_path, index=False)
     print(f"\n💾 Recomendaciones guardadas en: {output_path}")
     
@@ -521,8 +523,10 @@ def main():
     print(f"\n📊 Generando visualizaciones...")
     fig = create_visualizations(df_volatility, df_performance, df_recommendations)
     
-    # Guardar gráficos
-    viz_path = Path(__file__).parent / "ticker_parameters_analysis.png"
+    # Guardar gráficos en scripts/visualizations/
+    viz_dir = Path(__file__).parent.parent / "visualizations"
+    viz_dir.mkdir(exist_ok=True)
+    viz_path = viz_dir / "ticker_parameters_analysis.png"
     plt.savefig(viz_path, dpi=150, bbox_inches='tight')
     print(f"   ✅ Gráficos guardados en: {viz_path}")
     

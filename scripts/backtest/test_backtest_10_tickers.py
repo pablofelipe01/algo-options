@@ -243,15 +243,17 @@ def main():
         print("\n📊 Generando visualizaciones...")
         visualizer = BacktestVisualizer(results)
         
-        # Guardar gráficos
-        save_path = Path(__file__).parent / "backtest_10_tickers_results.png"
+        # Guardar gráficos en scripts/visualizations/
+        viz_dir = Path(__file__).parent.parent / "visualizations"
+        viz_dir.mkdir(exist_ok=True)
+        save_path = viz_dir / "backtest_10_tickers_results.png"
         visualizer.plot_all(save_path=str(save_path))
         
         # === GUARDAR DATASET PARA ML ===
         print("\n💾 Guardando dataset para Machine Learning...")
         
         if 'raw_data' in results and len(results['raw_data']) > 0:
-            dataset_path = Path(__file__).parent / "ml_dataset_10_tickers.csv"
+            dataset_path = Path(__file__).parent.parent.parent / "data" / "analysis" / "ml_dataset_10_tickers.csv"
             results['raw_data'].to_csv(dataset_path, index=False)
             print(f"  ✅ Dataset guardado: {dataset_path}")
             print(f"  📊 Total de registros: {len(results['raw_data'])}")

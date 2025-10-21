@@ -406,8 +406,10 @@ def create_visualizations(df, ticker_stats, category_stats, corr_matrix):
     
     plt.tight_layout()
     
-    # Guardar
-    output_path = Path(__file__).parent / 'analysis_results.png'
+    # Guardar en scripts/visualizations/
+    viz_dir = Path(__file__).parent.parent / 'visualizations'
+    viz_dir.mkdir(exist_ok=True)
+    output_path = viz_dir / 'analysis_results.png'
     plt.savefig(output_path, dpi=300, bbox_inches='tight')
     print(f"\n✅ Visualizaciones guardadas en: {output_path}")
     

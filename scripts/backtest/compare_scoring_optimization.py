@@ -306,7 +306,7 @@ def create_comparison_viz(df, ticker_analysis, dte_analysis):
     
     plt.tight_layout()
     
-    output_path = 'scripts/scoring_optimization_comparison.png'
+    output_path = 'scripts/visualizations/scoring_optimization_comparison.png'
     plt.savefig(output_path, dpi=300, bbox_inches='tight')
     print(f"\n✅ Visualizaciones guardadas en: {output_path}")
     

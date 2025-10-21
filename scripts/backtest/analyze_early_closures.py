@@ -358,7 +358,7 @@ def create_visualizations(df, closed_profit, closed_loss, closed_end, early_clos
     
     plt.tight_layout()
     
-    output_path = 'scripts/early_closures_analysis.png'
+    output_path = 'scripts/visualizations/early_closures_analysis.png'
     plt.savefig(output_path, dpi=300, bbox_inches='tight')
     print(f"\n✅ Visualizaciones guardadas en: {output_path}")
     
