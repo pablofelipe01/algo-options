@@ -96,16 +96,59 @@ otions-data/
 │
 ├── logs/
 │   ├── extraction.log                # Log extracción histórica
-│   └── daily_update_YYYYMMDD.log     # Logs actualizaciones
+│   ├── daily_update_YYYYMMDD.log     # Logs actualizaciones
+│   └── backtest_adaptive_params_YYYYMMDD.log  # Logs backtesting
 │
 ├── scripts/
-│   ├── extract_test.py               # Test de extracción
-│   ├── extract_historical.py         # Extracción 60 días
-│   ├── daily_update.py               # Actualización incremental
-│   ├── verify_all.py                 # Verificación de datos
-│   ├── analyze_data.py               # Análisis completo
-│   ├── weekly_update.sh              # Wrapper ejecutable
-│   └── quick_analysis.sh             # Análisis rápido
+│   ├── data_pipeline/                # Pipeline de extracción y verificación
+│   │   ├── extract_test.py           # Test de extracción
+│   │   ├── extract_historical.py     # Extracción 60 días
+│   │   ├── daily_update.py           # Actualización incremental
+│   │   ├── verify_all.py             # Verificación de datos
+│   │   ├── verify_data.py            # Verificación adicional
+│   │   ├── analyze_data.py           # Análisis exploratorio
+│   │   ├── check_growth.sh           # Monitoreo de crecimiento
+│   │   └── weekly_update.sh          # Wrapper ejecutable
+│   │
+│   ├── quantitative/                 # Módulo cuantitativo
+│   │   ├── black_scholes.py          # Black-Scholes-Merton
+│   │   ├── probability.py            # PoP, Expected Value
+│   │   ├── utils.py                  # Utilidades
+│   │   └── validation.py             # Validaciones
+│   │
+│   ├── strategies/                   # Estrategias y backtester
+│   │   ├── backtester_multi.py       # Backtester multi-ticker
+│   │   ├── backtester.py             # Backtester base
+│   │   ├── adaptive_config.py        # Parámetros adaptativos
+│   │   ├── iron_condor.py            # Iron Condor
+│   │   ├── covered_call.py           # Covered Call
+│   │   ├── risk_manager.py           # Risk Manager
+│   │   └── filters.py                # Filtros de selección
+│   │
+│   ├── backtest/                     # Tests y análisis de backtesting
+│   │   ├── test_backtest_10_tickers.py
+│   │   ├── test_backtest_multi.py
+│   │   ├── analyze_backtest_results.py
+│   │   ├── analyze_early_closures.py
+│   │   ├── analyze_ticker_parameters.py
+│   │   ├── compare_gld_tsla.py
+│   │   └── compare_scoring_optimization.py
+│   │
+│   └── visualizations/               # Gráficos y reportes
+│       ├── analysis_results.png
+│       ├── early_closures_analysis.png
+│       ├── ticker_parameters_analysis.png
+│       └── ... (8 PNGs con 45 gráficos)
+│
+├── data/
+│   ├── historical/                   # Datos históricos (.parquet)
+│   └── analysis/                     # Datasets de análisis (.csv)
+│
+├── documents/                        # Documentación completa
+│   ├── INDEX.md                      # Índice de documentación
+│   ├── README.md                     # Este archivo
+│   ├── FASE_2_COMPLETADA.md          # Resumen ejecutivo Fase 2
+│   └── ... (9 archivos de docs)
 │
 ├── .env                              # API Key (NO compartir)
 ├── venv/                             # Entorno virtual
@@ -126,14 +169,14 @@ otions-data/
 ```bash
 cd ~/Desktop/otions-data
 source venv/bin/activate
-python scripts/extract_test.py
+python scripts/data_pipeline/extract_test.py
 ```
 
 **Resultado esperado:** Extracción de ~1,400 contratos de SPY.
 
 ### 3. Extracción histórica completa:
 ```bash
-python scripts/extract_historical.py
+python scripts/data_pipeline/extract_historical.py
 ```
 
 **Tiempo:** ~15-20 minutos  
@@ -141,28 +184,30 @@ python scripts/extract_historical.py
 
 ### 4. Verificación:
 ```bash
-python scripts/verify_all.py
+python scripts/data_pipeline/verify_all.py
 ```
 
 ---
 
 ## 📜 Scripts Disponibles
 
-### `extract_test.py`
+### Data Pipeline
+
+#### `extract_test.py`
 **Propósito:** Test rápido de extracción  
 **Uso:**
 ```bash
-python scripts/extract_test.py
+python scripts/data_pipeline/extract_test.py
 ```
 **Output:** 1 ticker, 1 fecha, ~1,400 contratos
 
 ---
 
-### `extract_historical.py`
+#### `extract_historical.py`
 **Propósito:** Extracción histórica completa (60 días)  
 **Uso:**
 ```bash
-python scripts/extract_historical.py
+python scripts/data_pipeline/extract_historical.py
 ```
 **Configuración:**
 - Tickers: 10 (índices, stocks, commodities)
@@ -174,11 +219,11 @@ python scripts/extract_historical.py
 
 ---
 
-### `daily_update.py`
+#### `daily_update.py`
 **Propósito:** Actualización incremental  
 **Uso:**
 ```bash
-python scripts/daily_update.py
+python scripts/data_pipeline/daily_update.py
 ```
 **Función:**
 - Extrae datos del día actual
@@ -188,11 +233,11 @@ python scripts/daily_update.py
 
 ---
 
-### `verify_all.py`
+#### `verify_all.py`
 **Propósito:** Verificación de calidad de datos  
 **Uso:**
 ```bash
-python scripts/verify_all.py
+python scripts/data_pipeline/verify_all.py
 ```
 **Output:**
 - Resumen por ticker
@@ -202,11 +247,11 @@ python scripts/verify_all.py
 
 ---
 
-### `analyze_data.py`
+#### `analyze_data.py`
 **Propósito:** Análisis completo e interactivo  
 **Uso:**
 ```bash
-python scripts/analyze_data.py
+python scripts/data_pipeline/analyze_data.py
 ```
 **Menú:**
 1. Análisis completo de un ticker
@@ -224,11 +269,11 @@ python scripts/analyze_data.py
 
 ---
 
-### `weekly_update.sh`
+#### `weekly_update.sh`
 **Propósito:** Wrapper para actualización semanal  
 **Uso:**
 ```bash
-./scripts/weekly_update.sh
+./scripts/data_pipeline/weekly_update.sh
 ```
 **Función:**
 - Ejecuta `daily_update.py`
@@ -246,7 +291,7 @@ python scripts/analyze_data.py
 1. **Ejecutar actualización:**
 ```bash
    cd ~/Desktop/otions-data
-   ./scripts/weekly_update.sh
+   ./scripts/data_pipeline/weekly_update.sh
 ```
 
 2. **O doble-clic en:**

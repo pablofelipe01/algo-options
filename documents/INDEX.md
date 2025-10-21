@@ -106,29 +106,54 @@ Este directorio contiene toda la documentación del proyecto, organizada por cat
 
 ## 📁 Estructura de Archivos Generados
 
-### Scripts de Análisis (7 archivos)
-1. `scripts/analyze_backtest_results.py` (521 líneas)
-2. `scripts/compare_gld_tsla.py` (334 líneas)
-3. `scripts/analyze_early_closures.py` (387 líneas)
-4. `scripts/compare_scoring_optimization.py` (326 líneas)
-5. `scripts/analyze_ticker_parameters.py` (450 líneas)
-6. `scripts/ticker_parameters_recommendations.csv`
-7. `scripts/INVESTIGACION_CIERRE_ANTICIPADO.txt`
+### Scripts de Análisis y Backtesting
+**Ubicación:** `scripts/backtest/`
+1. `analyze_backtest_results.py` (521 líneas)
+2. `analyze_early_closures.py` (387 líneas)
+3. `analyze_ticker_parameters.py` (450 líneas)
+4. `compare_gld_tsla.py` (334 líneas)
+5. `compare_scoring_optimization.py` (326 líneas)
+6. `demo_quantitative.py` (demo de uso)
+7. `test_backtest_10_tickers.py` (test principal)
+8. `test_backtest_multi.py` (test multi-ticker)
+9. `test_backtest_run.py` (test individual)
+10. `test_price_lookup.py` (test de precios)
+11. `backtest_optimized_scoring.log` (log de scoring)
 
-### Visualizaciones (5 PNGs, 45 gráficos)
-1. `scripts/analysis_results.png` (9 gráficos)
-2. `scripts/gld_vs_tsla_comparison.png` (9 gráficos)
-3. `scripts/early_closures_analysis.png` (9 gráficos)
-4. `scripts/scoring_optimization_comparison.png` (9 gráficos)
-5. `scripts/ticker_parameters_analysis.png` (9 gráficos)
+### Visualizaciones (8 PNGs, 45 gráficos)
+**Ubicación:** `scripts/visualizations/`
+1. `analysis_results.png` (9 gráficos)
+2. `gld_vs_tsla_comparison.png` (9 gráficos)
+3. `early_closures_analysis.png` (9 gráficos)
+4. `scoring_optimization_comparison.png` (9 gráficos)
+5. `ticker_parameters_analysis.png` (9 gráficos)
+6. `backtest_results.png`
+7. `backtest_10_tickers_results.png`
+8. `backtest_multi_results.png`
 
-### Código (3 archivos)
-1. `scripts/strategies/backtester_multi.py` (modificado)
-2. `scripts/quantitative/black_scholes.py` (modificado)
-3. `scripts/strategies/adaptive_config.py` (creado, 350 líneas)
+### Código Fuente (Módulos Principales)
+**Ubicación:** `scripts/strategies/` y `scripts/quantitative/`
+1. `strategies/backtester_multi.py` (modificado con adaptive params)
+2. `quantitative/black_scholes.py` (modificado con BSM fallback)
+3. `strategies/adaptive_config.py` (creado, 350 líneas)
+4. `strategies/backtester.py` (backtester base)
 
-### Datasets
-1. `scripts/ml_dataset_10_tickers.csv` (37-44 trades)
+### Datasets de Análisis
+**Ubicación:** `data/analysis/`
+1. `ml_dataset_10_tickers.csv` (37 trades, dataset ML)
+2. `ticker_parameters_recommendations.csv` (parámetros por ticker)
+3. `quantitative_analysis_SPY_20251020_120302.csv` (análisis SPY)
+
+### Pipeline de Datos
+**Ubicación:** `scripts/data_pipeline/`
+1. `extract_test.py` - Test de conexión
+2. `extract_historical.py` - Extracción completa 60 días
+3. `daily_update.py` - Actualización incremental
+4. `verify_all.py` - Verificación de calidad
+5. `verify_data.py` - Verificación adicional
+6. `analyze_data.py` - Análisis exploratorio
+7. `check_growth.sh` - Monitoreo de crecimiento
+8. `weekly_update.sh` - Wrapper automatizado
 
 ---
 
