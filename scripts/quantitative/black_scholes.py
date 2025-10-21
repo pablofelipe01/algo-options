@@ -15,7 +15,12 @@ Referencias:
 import numpy as np
 from scipy.stats import norm
 from typing import Dict, Tuple, Literal
-from .utils import validate_inputs
+
+# 🆕 Import modificado para soportar import directo desde backtester
+try:
+    from .utils import validate_inputs
+except ImportError:
+    from utils import validate_inputs
 
 
 def calculate_d1_d2(S: float, K: float, T: float, r: float, sigma: float) -> Tuple[float, float]:

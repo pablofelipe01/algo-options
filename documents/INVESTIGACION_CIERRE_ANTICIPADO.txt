@@ -1,0 +1,307 @@
+"""
+REPORTE DE INVESTIGACIÓN: CIERRE ANTICIPADO DE POSICIONES
+==========================================================
+
+FECHA: 2025-10-20
+INVESTIGADOR: Sistema de Trading Algorítmico
+OBJETIVO: Entender por qué NINGUNA posición cerró anticipadamente
+
+==========================================================
+HALLAZGOS DE LA INVESTIGACIÓN
+==========================================================
+
+1. FLUJO DEL BACKTESTER ✅
+--------------------------
+
+El backtester sigue este flujo en cada día de trading:
+
+1. Loop por cada fecha en trading_dates
+2. Llama a _manage_positions() ← AQUÍ SE CHECA
+3. Llama a _find_new_opportunities() (solo viernes)
+4. Registra equity del día
+
+Por lo tanto, SÍ está checando posiciones en cada día.
+
+
+2. CÓDIGO DE PROFIT TARGET (Línea 620)
+---------------------------------------
+
+```python
+# Verificar profit target
+if current_pnl >= position.profit_target:
+    position.pnl = current_pnl
+    position.exit_date = current_date
+    position.exit_value = current_value
+    position.days_held = (current_date - position.entry_date).days
+    position.status = 'closed_profit'
+    positions_to_close.append(position)
+    continue
+```
+
+✅ CORRECTO: Cierra cuando current_pnl >= profit_target
+
+
+3. CÓDIGO DE STOP LOSS (Línea 631)
+-----------------------------------
+
+```python
+# Verificar stop loss
+if current_pnl <= -position.stop_loss:
+    position.pnl = current_pnl
+    position.exit_date = current_date
+    position.exit_value = current_value
+    position.days_held = (current_date - position.entry_date).days
+    position.status = 'closed_loss'
+    positions_to_close.append(position)
+    continue
+```
+
+✅ CORRECTO: Cierra cuando current_pnl <= -stop_loss
+
+
+4. CÁLCULO DE CURRENT_PNL (Línea 616)
+--------------------------------------
+
+```python
+# Calcular PnL actual (para Iron Condor: crédito recibido - valor actual)
+current_pnl = position.premium_collected - current_value
+```
+
+✅ CORRECTO: 
+- Iron Condor vendido (crédito)
+- PnL = Premium recibido - Valor actual de las opciones
+- Si valor actual baja → PnL sube (bueno)
+- Si valor actual sube → PnL baja (malo)
+
+
+5. VALORACIÓN CON _calculate_position_value() ⚠️
+-------------------------------------------------
+
+```python
+# Calcular valor actual de la posición
+current_value = self._calculate_position_value(
+    ticker, position, current_date, underlying_price
+)
+
+# DEBUG: Ver qué está pasando con la valoración
+days_remaining = (position.expiration_date - current_date).days
+if current_value is None:
+    continue  ← ¡AQUÍ ESTÁ EL PROBLEMA!
+```
+
+🚨 PROBLEMA CRÍTICO IDENTIFICADO:
+
+Si _calculate_position_value() retorna None, el código hace `continue`
+y SALTA la verificación de profit target y stop loss!
+
+
+6. ¿CUÁNDO RETORNA None? (Línea 720-790)
+-----------------------------------------
+
+_calculate_position_value() retorna None cuando:
+
+a) No hay datos para esa fecha/vencimiento:
+```python
+if len(available_options) == 0:
+    return None
+```
+
+b) No se encuentran TODAS las legs:
+```python
+if legs_found == len(position.legs):
+    return total_value
+else:
+    # Si falta alguna leg, no podemos valorar correctamente
+    return None  ← ¡PROBLEMA!
+```
+
+🚨 HALLAZGO CLAVE:
+
+Si alguna de las 4 legs del Iron Condor no tiene datos en un snapshot,
+la función retorna None y se SALTA la verificación de targets/stops.
+
+
+7. ¿POR QUÉ FALTAN DATOS DE LEGS?
+-----------------------------------
+
+Posibles razones:
+
+a) LIQUIDEZ: Opciones muy OTM pueden no tener volumen/precio en algunos días
+b) POLYGON DATA: Puede que no todos los strikes tengan datos en todos los snapshots
+c) BID-ASK: Si close = NaN y vwap = NaN, la leg no tiene precio
+
+Esto explicaría por qué:
+- Las posiciones NO cierran anticipadamente
+- Todas llegan a vencimiento (donde usa valor intrínseco, no market data)
+
+
+==========================================================
+CONCLUSIÓN PRINCIPAL
+==========================================================
+
+🎯 PROBLEMA IDENTIFICADO:
+
+El backtester SÍ checa profit targets y stop losses en cada día,
+pero SOLO si puede valorar TODAS las legs de la posición.
+
+Si alguna leg no tiene datos (común en opciones OTM con baja liquidez),
+el código hace `continue` y NO evalúa si debe cerrar.
+
+Esto es especialmente problemático para Iron Condors porque tienen
+4 legs (2 calls, 2 puts), multiplicando la probabilidad de que
+alguna no tenga datos.
+
+
+==========================================================
+EVIDENCIA DE LOS DATOS
+==========================================================
+
+De tu análisis:
+- 20/20 trades llegaron a vencimiento
+- Ninguno cerró por profit_target
+- Ninguno cerró por stop_loss
+- Todas las posiciones tienen status = 'closed_end' (expired)
+
+Esto es consistente con mi hallazgo:
+→ Las legs OTM no tienen datos suficientes
+→ current_value retorna None
+→ Se salta el chequeo de targets/stops
+→ Solo cierra al vencimiento (usa valor intrínseco, no market data)
+
+
+==========================================================
+IMPLICACIONES
+==========================================================
+
+1. TUS RESULTADOS SON OPTIMISTAS
+   - No estás capturando cierres por profit (dejarías dinero en la mesa)
+   - No estás capturando stops (podrías tener peores pérdidas)
+   - Los retornos reales podrían ser diferentes
+
+2. GLD (92% return) PODRÍA SER DIFERENTE
+   - Si hubiera cerrado en 50% profit target
+   - Solo hubiera ganado ~46% (no 92%)
+   - Pero cerraría más rápido (libera capital antes)
+
+3. LA OPTIMIZACIÓN NECESITA ESTE FIX PRIMERO
+   - No puedes optimizar profit targets si nunca se evalúan
+   - Los datos de ML están sesgados (solo expiraciones)
+
+
+==========================================================
+RECOMENDACIONES
+==========================================================
+
+OPCIÓN A: FIX CONSERVADOR ⭐ RECOMENDADO
+----------------------------------------
+Usar modelo de valoración cuando faltan datos de mercado:
+
+```python
+if current_value is None:
+    # Fallback: estimar valor con Black-Scholes
+    current_value = self._estimate_value_with_model(
+        position, current_date, underlying_price
+    )
+```
+
+PROS:
+- Permite evaluar targets/stops siempre
+- Usa modelo cuantitativo (ya tienes BSM)
+- Más realista que ignorar
+
+CONS:
+- Menos preciso que precio real
+- Requiere implementar función
+
+
+OPCIÓN B: FIX AGRESIVO
+-----------------------
+Asumir valor = 0 para legs sin datos (muy OTM):
+
+```python
+if current_value is None:
+    # Asumir que opciones muy OTM valen ~0
+    current_value = 0
+```
+
+PROS:
+- Simple
+- Conservador
+
+CONS:
+- Impreciso
+- Puede causar cierres prematuros incorrectos
+
+
+OPCIÓN C: FIX MÍNIMO
+---------------------
+Al menos registrar cuando no puede valorar:
+
+```python
+if current_value is None:
+    self.valorization_failures += 1
+    continue
+```
+
+PROS:
+- Mínimo cambio
+- Diagnóstico
+
+CONS:
+- No resuelve el problema
+
+
+==========================================================
+PRÓXIMO PASO RECOMENDADO
+==========================================================
+
+1. Implementar OPCIÓN A (FIX CONSERVADOR)
+   - Agregar función _estimate_value_with_model()
+   - Usar Black-Scholes para estimar valor
+   - Usar esto como fallback cuando faltan datos
+
+2. Agregar logging para ver cuántas veces pasa
+   
+3. Re-correr backtest y comparar resultados
+
+4. Después continuar con optimización de scoring
+
+
+==========================================================
+CÓDIGO A MODIFICAR
+==========================================================
+
+Archivo: backtester.py
+Función: _manage_positions()
+Líneas: ~611-620
+
+ANTES:
+```python
+if current_value is None:
+    continue
+```
+
+DESPUÉS:
+```python
+if current_value is None:
+    # Fallback: estimar con modelo
+    current_value = self._estimate_value_with_model(
+        position, current_date, underlying_price
+    )
+    if current_value is None:
+        continue  # Si aún no podemos valorar, skip
+```
+
+Agregar nueva función:
+```python
+def _estimate_value_with_model(self, position, current_date, underlying_price):
+    # Usar Black-Scholes para estimar valor de cada leg
+    # Sumar para obtener valor total
+    pass
+```
+
+
+==========================================================
+FIN DEL REPORTE
+==========================================================
+"""

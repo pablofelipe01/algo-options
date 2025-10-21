@@ -19,7 +19,7 @@ echo ""
 # Ejecutar actualización
 echo "🔄 Extrayendo datos de hoy..."
 echo ""
-python scripts/daily_update.py
+python scripts/data_pipeline/daily_update.py
 
 # Verificar resultado
 if [ $? -eq 0 ]; then
@@ -28,7 +28,7 @@ if [ $? -eq 0 ]; then
     echo "📊 VERIFICACIÓN DE DATOS"
     echo "════════════════════════════════════════════════════════════"
     echo ""
-    python scripts/verify_all.py
+    python scripts/data_pipeline/verify_all.py
     echo ""
     echo "✅ ACTUALIZACIÓN COMPLETADA EXITOSAMENTE"
 else

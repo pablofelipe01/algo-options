@@ -1,0 +1,11 @@
+ticker,ticker_type,vol_category,profit_target_pct,stop_loss_pct,dte_min,dte_max,reasoning_pt,reasoning_sl,reasoning_dte
+QQQ,ETF,Medium,30,150,49,56,Volatilidad media → balance entre theta y protección | Alto éxito en cierres anticipados,Volatilidad media → stop loss balanceado,ETF → Long DTE (49-56) para estabilidad
+SPY,ETF,Medium,30,150,49,56,Volatilidad media → balance entre theta y protección | Alto éxito en cierres anticipados,Volatilidad media → stop loss balanceado,ETF → Long DTE (49-56) para estabilidad
+IWM,ETF,High,25,200,49,56,Alta volatilidad → cerrar rápido para capturar theta,Alta volatilidad → stop loss amplio anti-whipsaw,ETF → Long DTE (49-56) para estabilidad
+TSLA,Tech,High,20,200,42,49,Alta volatilidad → cerrar rápido para capturar theta | Alto éxito en cierres anticipados,Alta volatilidad → stop loss amplio anti-whipsaw,Tech → Medium-Long DTE (42-49) para capturar ciclos
+SLV,Commodity,High,25,200,56,60,Alta volatilidad → cerrar rápido para capturar theta,Alta volatilidad → stop loss amplio anti-whipsaw,Commodity → Extra Long DTE (56-60) para volatilidad baja
+AMZN,Tech,High,25,200,42,49,Alta volatilidad → cerrar rápido para capturar theta,Alta volatilidad → stop loss amplio anti-whipsaw,Tech → Medium-Long DTE (42-49) para capturar ciclos
+NVDA,Tech,High,25,200,42,49,Alta volatilidad → cerrar rápido para capturar theta,Alta volatilidad → stop loss amplio anti-whipsaw,Tech → Medium-Long DTE (42-49) para capturar ciclos
+GLD,Commodity,High,25,200,56,60,Alta volatilidad → cerrar rápido para capturar theta,Alta volatilidad → stop loss amplio anti-whipsaw,Commodity → Extra Long DTE (56-60) para volatilidad baja
+MSFT,Tech,High,25,200,42,49,Alta volatilidad → cerrar rápido para capturar theta,Alta volatilidad → stop loss amplio anti-whipsaw,Tech → Medium-Long DTE (42-49) para capturar ciclos
+AAPL,Tech,High,25,200,42,49,Alta volatilidad → cerrar rápido para capturar theta,Alta volatilidad → stop loss amplio anti-whipsaw,Tech → Medium-Long DTE (42-49) para capturar ciclos
