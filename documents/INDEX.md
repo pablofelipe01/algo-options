@@ -6,12 +6,13 @@ Este directorio contiene toda la documentación del proyecto, organizada por cat
 
 ## 📖 Documentación Principal
 
-### 1. **README.md**
-**Descripción General del Proyecto**
-- Visión general del sistema
-- Arquitectura de 6 partes
-- Tecnologías utilizadas
-- Instrucciones de instalación y uso
+### 1. **DATA_PIPELINE.md**
+**Guía Completa del Pipeline de Datos**
+- Extracción de datos (Polygon.io)
+- Actualización semanal automatizada
+- Verificación y análisis de datos
+- Scripts disponibles y uso
+- Instrucciones de instalación y configuración
 
 ---
 

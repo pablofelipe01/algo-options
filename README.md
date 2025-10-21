@@ -95,7 +95,7 @@ python scripts/backtest/test_backtest_10_tickers.py
 | Documento | Descripción |
 |-----------|-------------|
 | **[documents/INDEX.md](documents/INDEX.md)** | 📖 Índice completo de documentación |
-| **[documents/README.md](documents/README.md)** | 📊 Guía del data pipeline |
+| **[documents/DATA_PIPELINE.md](documents/DATA_PIPELINE.md)** | � Guía del pipeline de datos |
 | **[documents/FASE_2_COMPLETADA.md](documents/FASE_2_COMPLETADA.md)** | 🏆 Resumen ejecutivo Fase 2 |
 | **[documents/PARAMETROS_ADAPTATIVOS.md](documents/PARAMETROS_ADAPTATIVOS.md)** | 🎯 Sistema de parámetros adaptativos |
 | **[documents/quantitative_README.md](documents/quantitative_README.md)** | 🧮 Módulo cuantitativo (BSM) |
