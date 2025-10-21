@@ -38,7 +38,7 @@ TICKER_CATEGORIES = {
 }
 
 # Ruta al dataset
-CSV_PATH = Path(__file__).parent / 'ml_dataset_10_tickers.csv'
+CSV_PATH = Path(__file__).parent.parent.parent / 'data' / 'analysis' / 'ml_dataset_10_tickers.csv'
 
 # =============================================================================
 # FUNCIONES DE ANÁLISIS

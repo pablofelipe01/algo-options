@@ -26,7 +26,7 @@ plt.rcParams['font.size'] = 10
 
 def load_backtest_data():
     """Carga los datos del backtest optimizado."""
-    data_path = Path(__file__).parent / "ml_dataset_10_tickers.csv"
+    data_path = Path(__file__).parent.parent.parent / "data" / "analysis" / "ml_dataset_10_tickers.csv"
     
     if not data_path.exists():
         raise FileNotFoundError(f"No se encontró: {data_path}")
@@ -41,7 +41,7 @@ def load_backtest_data():
 
 def load_historical_data(ticker):
     """Carga datos históricos de un ticker para analizar IV."""
-    data_path = Path(__file__).parent.parent / "data" / "historical" / f"{ticker}_60days.parquet"
+    data_path = Path(__file__).parent.parent.parent / "data" / "historical" / f"{ticker}_60days.parquet"
     
     if not data_path.exists():
         return None

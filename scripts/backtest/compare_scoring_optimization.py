@@ -19,8 +19,10 @@ def load_and_compare():
     print("📊 COMPARACIÓN: SCORING ORIGINAL vs OPTIMIZADO")
     print("=" * 80)
     
+    from pathlib import Path
     # Cargar dataset (es el mismo, los scores cambiaron internamente)
-    df = pd.read_csv('scripts/ml_dataset_10_tickers.csv')
+    csv_path = Path(__file__).parent.parent.parent / 'data' / 'analysis' / 'ml_dataset_10_tickers.csv'
+    df = pd.read_csv(csv_path)
     df['entry_date'] = pd.to_datetime(df['entry_date'])
     df['exit_date'] = pd.to_datetime(df['exit_date'])
     
