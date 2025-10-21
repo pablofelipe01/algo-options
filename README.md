@@ -41,7 +41,9 @@ otions-data/
 │   ├── data_pipeline/       # 🔄 Extracción y verificación de datos
 │   ├── quantitative/        # 🧮 Black-Scholes, Greeks, Probabilidad
 │   ├── strategies/          # 🎲 Backtester + Estrategias
-│   ├── backtest/            # 📊 Tests y análisis
+│   ├── backtest/            # 📊 Tests y análisis (6 scripts esenciales)
+│   ├── examples/            # 📚 Demos y ejemplos educativos
+│   ├── utils/               # 🔧 Utilidades y herramientas auxiliares
 │   └── visualizations/      # 📈 Gráficos (8 PNGs, 45 gráficos)
 │
 └── logs/                    # Logs de ejecución
@@ -127,14 +129,24 @@ python scripts/backtest/test_backtest_10_tickers.py
 - **Filtros:** Liquidez, Volatilidad, Delta, DTE
 
 ### 4. Backtesting y Análisis (`scripts/backtest/`)
-- **Tests:** `test_backtest_10_tickers.py`, `test_backtest_multi.py`
-- **Análisis:** 
-  - Resultados de backtest
-  - Cierres anticipados
-  - Parámetros por ticker
-  - Comparaciones (GLD vs TSLA, scoring optimization)
+**Script Principal:**
+- `test_backtest_10_tickers.py` - Backtest con parámetros adaptativos
 
-### 5. Visualizaciones (`scripts/visualizations/`)
+**Scripts de Análisis (TODOs #1-5):**
+- `analyze_backtest_results.py` - Análisis exploratorio
+- `compare_gld_tsla.py` - Comparación GLD vs TSLA
+- `analyze_early_closures.py` - Análisis de cierres anticipados
+- `compare_scoring_optimization.py` - Optimización de scoring
+- `analyze_ticker_parameters.py` - Parámetros por ticker
+
+### 5. Ejemplos y Utilidades
+**`scripts/examples/`** - Demos educativos:
+- `demo_quantitative.py` - Demostración BSM y Greeks
+
+**`scripts/utils/`** - Herramientas auxiliares:
+- `test_price_lookup.py` - Lookup de precios específicos
+
+### 6. Visualizaciones (`scripts/visualizations/`)
 8 archivos PNG con 45 gráficos totales mostrando:
 - Distribuciones de PnL
 - Análisis de early closures

@@ -10,7 +10,8 @@ import sys
 from pathlib import Path
 from datetime import datetime
 
-sys.path.insert(0, str(Path(__file__).parent))
+# Agregar el directorio scripts/ al path para poder importar módulos
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from strategies.backtester_multi import BacktestConfig, BacktestEngine, BacktestVisualizer
 
@@ -23,7 +24,7 @@ def main():
     config = BacktestConfig(
         start_date=datetime(2025, 8, 22),  # Todo el rango disponible
         end_date=datetime(2025, 10, 20),
-        initial_capital=200000,  # 🆕 Más capital para más posiciones
+        initial_capital=20000,  # Capital inicial realista ($20K)
         max_positions=30,  # 🆕 Hasta 30 posiciones simultáneas
         max_positions_per_ticker=2,  # Mantener límite por ticker
         tickers=[
